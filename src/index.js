@@ -50,21 +50,30 @@ class Game extends React.Component {
                 }
             ],
             stepNumber: 0,
-            xIsNext: true
+            xIsNext: true,
+            postionChanged: false
         };
     }
 
     jumpTo(step) {
         this.setState({
             stepNumber: step,
-            xIsNext: (step % 2) === 0
+            xIsNext: (step % 2) === 0,
+            postionChanged: true
         });
+    }
+
+    setActive(clickedStep, postionChanged) {
+        return `btn ${ (postionChanged && clickedStep === this.state.stepNumber)
+            ? 'active'
+            : ''}`;
     }
 
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
+        const postionChanged = this.state.postionChanged;
 
         const moves = history.map((step, move) => {
             let position = '';
@@ -76,7 +85,9 @@ class Game extends React.Component {
                 : 'Go to game start';
             return (
                 <li key={move}>
-                    <button onClick={() => this.jumpTo(move)}>{desc}</button>
+                    <button
+                        onClick={() => this.jumpTo(move)}
+                        className={this.setActive(move, postionChanged)}>{desc}</button>
                 </li>
             );
         });
@@ -127,7 +138,8 @@ class Game extends React.Component {
                 }
             ]),
             stepNumber: history.length,
-            xIsNext: !this.state.xIsNext
+            xIsNext: !this.state.xIsNext,
+            postionChanged: false
         });
     }
 }
